@@ -85,3 +85,59 @@ export async function createTextbook(formData: FormData) {
     revalidatePath('/textbooks')
     redirect('/textbooks')
 }
+
+export async function getTextbook(id: string) {
+    const supabase = createClient()
+    const { data, error } = await supabase
+        .from('textbooks')
+        .select(`
+            *,
+            profiles (
+                full_name,
+                email
+            )
+        `)
+        .eq('id', id)
+        .single()
+
+    if (error) {
+        return null
+    }
+
+    return data as Textbook
+}
+
+export async function requestTextbook(id: string) {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        redirect('/login')
+    }
+
+    // Check if not owner
+    const textbook = await getTextbook(id)
+    if (!textbook) return { error: "Textbook not found" }
+    if (textbook.owner_id === user.id) return { error: "You cannot borrow your own book." }
+
+    // Create transaction
+    const { error } = await supabase
+        .from('transactions')
+        .insert({
+            book_id: id,
+            borrower_id: user.id,
+            lender_id: textbook.owner_id,
+            status: 'pending',
+            start_date: new Date().toISOString(), // Mock dates for now
+            end_date: new Date().toISOString(),
+            amount: 0,
+            fee_amount: 0
+        })
+
+    if (error) {
+        return { error: error.message }
+    }
+
+    revalidatePath(`/textbooks/${id}`)
+    return { success: true }
+}

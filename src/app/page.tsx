@@ -15,16 +15,16 @@ export default function Home() {
                         ICU Students Only 🎓
                     </Link>
                     <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
-                        Seamless Textbook Sharing <br className="hidden sm:inline" />
-                        for the ICU Community
+                        Don't let your expensive <br className="hidden sm:inline" />
+                        textbooks gather dust.
                     </h1>
                     <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-                        Buy, borrow, and lend textbooks securely with your student ID.
-                        Fixed pricing, no negotiation, trusted ecosystem.
+                        Textbooks for Liberal Arts are expensive but often used for only one term.
+                        ICU TextLink lets you lend and rent books within the campus community at fixed, student-friendly prices.
                     </p>
                     <div className="space-x-4">
                         <Button size="lg" asChild>
-                            <Link href="/login">Get Started</Link>
+                            <Link href="/login">Log In / Sign Up</Link>
                         </Button>
                         <Button size="lg" variant="outline" asChild>
                             <Link href="/about">How it works</Link>

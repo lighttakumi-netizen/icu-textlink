@@ -37,7 +37,7 @@ export function Header({ user }: HeaderProps) {
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
             <div className="container flex h-14 items-center">
-                <Link href="/" className="mr-6 flex items-center space-x-2">
+                <Link href={user ? "/dashboard" : "/"} className="mr-6 flex items-center space-x-2">
                     <BookOpen className="h-6 w-6" />
                     <span className="font-bold inline-block">ICU TextLink</span>
                 </Link>
