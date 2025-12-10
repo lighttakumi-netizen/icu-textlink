@@ -4,6 +4,10 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 
+type ActionResponse =
+    | { error: string; success?: never; message?: never }
+    | { success: true; message: string; error?: never }
+
 export async function login(formData: FormData) {
     const supabase = createClient()
     const email = formData.get('email') as string
@@ -27,7 +31,8 @@ export async function login(formData: FormData) {
     return redirect('/dashboard')
 }
 
-export async function signup(formData: FormData) {
+
+export async function signup(formData: FormData): Promise<ActionResponse | void> {
     const supabase = createClient()
     const origin = headers().get('origin')
     const email = formData.get('email') as string
