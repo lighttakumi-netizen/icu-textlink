@@ -40,7 +40,7 @@ export default function LoginPage() {
 
         if (res?.error) {
             setError(res.error)
-        } else if (res?.success) {
+        } else if (res && 'success' in res && res.success) {
             setSuccess(res.message)
         }
     }
