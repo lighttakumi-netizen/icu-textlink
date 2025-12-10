@@ -41,6 +41,7 @@ export default function LoginPage() {
         if (res?.error) {
             setError(res.error)
         } else if (res && 'success' in res && res.success) {
+            // Success case
             setSuccess(res.message)
         }
     }
