@@ -211,3 +211,44 @@ export async function updateTransactionStatus(id: string, status: 'approved' | '
     revalidatePath('/dashboard')
     return { success: true }
 }
+
+export async function submitReview(transactionId: string, targetId: string, rating: number, comment: string) {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) return { error: "Not authenticated" }
+
+    // Verify transaction is completed/returned
+    const { data: transaction } = await supabase
+        .from('transactions')
+        .select('status')
+        .eq('id', transactionId)
+        .single()
+
+    if (!transaction || !['returned', 'completed'].includes(transaction.status)) {
+        return { error: "Transaction must be completed to leave a review." }
+    }
+
+    const { error } = await supabase
+        .from('reviews')
+        .insert({
+            transaction_id: transactionId,
+            reviewer_id: user.id,
+            target_id: targetId,
+            rating,
+            comment
+        })
+
+    if (error) return { error: error.message }
+
+    // Optionally update transaction status to fully 'completed' if it was just 'returned'
+    if (transaction.status === 'returned') {
+        await supabase
+            .from('transactions')
+            .update({ status: 'completed' })
+            .eq('id', transactionId)
+    }
+
+    revalidatePath('/dashboard')
+    return { success: true }
+}
