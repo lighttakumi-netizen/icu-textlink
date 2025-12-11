@@ -139,7 +139,8 @@ export async function requestTextbook(id: string) {
     }
 
     revalidatePath(`/textbooks/${id}`)
-    return { success: true }
+    revalidatePath('/dashboard')
+    return { success: true, message: "Request sent successfully" }
 }
 
 export async function getUserTransactions() {

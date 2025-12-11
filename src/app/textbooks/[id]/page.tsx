@@ -4,6 +4,7 @@ import { getTextbook, requestTextbook } from "../actions"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, User, Library } from "lucide-react"
+import { RequestButton } from "@/components/RequestButton"
 
 export default async function TextbookDetailsPage({ params }: { params: { id: string } }) {
     const textbook = await getTextbook(params.id)
@@ -81,11 +82,7 @@ export default async function TextbookDetailsPage({ params }: { params: { id: st
                     </div>
 
                     <div className="pt-6 border-t">
-                        <form action={handleRequest}>
-                            <Button size="lg" className="w-full text-lg h-12">
-                                Request to Borrow
-                            </Button>
-                        </form>
+                        <RequestButton textbookId={textbook.id} />
                         <p className="text-xs text-center text-muted-foreground mt-4">
                             By clicking Request, you agree to our Terms of Service.
                         </p>
