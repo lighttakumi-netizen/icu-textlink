@@ -1,6 +1,8 @@
-# Deployment Guide (Vercel + Supabase)
+# Deploy to Vercel
 
-This guide explains how to publish your **ICU TextLink** app so others can access it via a public link (e.g., `https://icu-textlink.vercel.app`).
+> Last Updated: 2025-12-11 (Fixing deployment)
+
+This guide explains how to deploy the ICU TextLink application to Vercel. so others can access it via a public link (e.g., `https://icu-textlink.vercel.app`).
 
 ## Prerequisites
 -   **GitHub Account**: [Create one here](https://github.com/join)
