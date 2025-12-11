@@ -35,12 +35,17 @@ export default function VerifyPage() {
         <div className="flex min-h-[calc(100vh-theme(spacing.16))] flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50">
             <Card className="w-full max-w-md">
                 <CardHeader>
-                    <CardTitle>Check your Inbox</CardTitle>
-                    <CardDescription>
-                        We've sent a 6-digit confirmation code to <strong>{email}</strong>.
+                    <CardTitle className="text-center text-green-600">Email Sent!</CardTitle>
+                    <CardDescription className="text-center">
+                        We've sent a 6-digit confirmation code to <br />
+                        <span className="font-semibold text-slate-900">{email}</span>
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
+                    <div className="mb-6 p-3 bg-blue-50 border border-blue-200 text-blue-700 rounded-md text-sm text-center">
+                        Please check your inbox (and spam folder) for the code.
+                    </div>
+
                     {error && (
                         <div className="mb-4 p-3 bg-red-100 border border-red-200 text-red-700 rounded-md flex items-center gap-2 text-sm">
                             <AlertCircle className="h-4 w-4" />
