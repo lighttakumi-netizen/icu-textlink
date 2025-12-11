@@ -63,7 +63,6 @@ export async function signup(formData: FormData): Promise<ActionResponse | void>
         email,
         password,
         options: {
-            emailRedirectTo: `${origin}/auth/callback`,
             data: {
                 full_name: `${firstName} ${lastName}`,
                 first_name: firstName,
