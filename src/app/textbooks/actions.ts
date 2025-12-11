@@ -141,3 +141,73 @@ export async function requestTextbook(id: string) {
     revalidatePath(`/textbooks/${id}`)
     return { success: true }
 }
+
+export async function getUserTransactions() {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) return []
+
+    const { data, error } = await supabase
+        .from('transactions')
+        .select(`
+            id,
+            status,
+            created_at,
+            book:textbooks (
+                id,
+                title,
+                image_url
+            ),
+            borrower:profiles!transactions_borrower_id_fkey (
+                id,
+                full_name,
+                email
+            ),
+            lender:profiles!transactions_lender_id_fkey (
+                id,
+                full_name,
+                email
+            )
+        `)
+        .or(`borrower_id.eq.${user.id},lender_id.eq.${user.id}`)
+        .order('created_at', { ascending: false })
+
+    if (error) {
+        console.error("Error fetching transactions:", error)
+        return []
+    }
+
+    return data
+}
+
+export async function updateTransactionStatus(id: string, status: 'approved' | 'rejected' | 'returned') {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) return { error: "Unauthorized" }
+
+    // Verify ownership/permission (simple check: must be lender to approve/reject)
+    // For 'returned', borrower might also be able to trigger, but let's stick to lender for now for simplicity.
+
+    // First fetch the transaction to verify role
+    const { data: transaction } = await supabase
+        .from('transactions')
+        .select('lender_id')
+        .eq('id', id)
+        .single()
+
+    if (!transaction || transaction.lender_id !== user.id) {
+        return { error: "You are not authorized to update this transaction." }
+    }
+
+    const { error } = await supabase
+        .from('transactions')
+        .update({ status })
+        .eq('id', id)
+
+    if (error) return { error: error.message }
+
+    revalidatePath('/dashboard')
+    return { success: true }
+}
