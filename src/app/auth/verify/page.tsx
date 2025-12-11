@@ -37,7 +37,7 @@ export default function VerifyPage() {
                 <CardHeader>
                     <CardTitle className="text-center text-green-600">Email Sent!</CardTitle>
                     <CardDescription className="text-center">
-                        We've sent a 6-digit confirmation code to <br />
+                        We've sent a confirmation code to <br />
                         <span className="font-semibold text-slate-900">{email}</span>
                     </CardDescription>
                 </CardHeader>
@@ -59,9 +59,9 @@ export default function VerifyPage() {
                             <Input
                                 id="code"
                                 name="code"
-                                placeholder="123456"
+                                placeholder="12345678"
                                 required
-                                maxLength={6}
+                                maxLength={8}
                                 className="text-center text-2xl tracking-widest letter-spacing-2"
                             />
                         </div>
