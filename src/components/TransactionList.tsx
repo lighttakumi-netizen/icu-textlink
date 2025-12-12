@@ -18,6 +18,8 @@ type Transaction = {
         id: string
         title: string
         image_url: string
+        course_id: string | null
+        course_name: string
     }
     borrower: {
         id: string
@@ -87,6 +89,10 @@ export function TransactionList({
                         <div className="flex justify-between items-start">
                             <div>
                                 <h4 className="font-semibold text-lg text-slate-900">{t.book.title}</h4>
+                                <p className="text-sm text-slate-500 mb-1">
+                                    {t.book.course_id && <span className="font-medium mr-2 text-primary">{t.book.course_id}</span>}
+                                    {t.book.course_name}
+                                </p>
                                 <p className="text-sm text-slate-500">
                                     {type === 'lending'
                                         ? `Requested by ${t.borrower.full_name}`
