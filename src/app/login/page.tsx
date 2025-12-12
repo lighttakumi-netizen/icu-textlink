@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
+import { useFormStatus } from "react-dom"
 import { login, signup } from "./actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,13 +11,29 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertCircle, CheckCircle2 } from "lucide-react"
 
+function LoginButton() {
+    const { pending } = useFormStatus()
+    return (
+        <Button type="submit" className="w-full" disabled={pending}>
+            {pending ? "Signing In..." : "Log In"}
+        </Button>
+    )
+}
+
+function SignupButton() {
+    const { pending } = useFormStatus()
+    return (
+        <Button type="submit" className="w-full" disabled={pending}>
+            {pending ? "Creating Account..." : "Sign Up"}
+        </Button>
+    )
+}
+
 export default function LoginPage() {
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState<string | null>(null)
-    const [isLoading, setIsLoading] = useState(false)
 
     async function handleLogin(formData: FormData) {
-        setIsLoading(true)
         setError(null)
         setSuccess(null)
 
@@ -25,13 +42,11 @@ export default function LoginPage() {
         const res = await login(formData)
         if (res?.error) {
             setError(res.error)
-            setIsLoading(false)
         }
         // If login is successful, the server action redirects, so we don't need to do anything.
     }
 
     async function handleSignup(formData: FormData) {
-        setIsLoading(true)
         setError(null)
         setSuccess(null)
 
@@ -39,16 +54,9 @@ export default function LoginPage() {
 
         if (res?.error) {
             setError(res.error)
-            setIsLoading(false)
         } else if (res && 'success' in res && res.success) {
             // Success case
             setSuccess(res.message)
-            setIsLoading(false)
-        } else {
-            // If redirect happens server-side (void return), we might not reach here, 
-            // or response is null/undefined. Keep loading true to prevent flicker.
-            // But if specific error not returned:
-            setIsLoading(false)
         }
     }
 
@@ -104,9 +112,7 @@ export default function LoginPage() {
                                         <Label htmlFor="password">Password</Label>
                                         <Input id="password" name="password" type="password" required />
                                     </div>
-                                    <Button type="submit" className="w-full" disabled={isLoading}>
-                                        {isLoading ? "Signing In..." : "Log In"}
-                                    </Button>
+                                    <LoginButton />
                                 </form>
                             </CardContent>
                         </Card>
@@ -150,9 +156,7 @@ export default function LoginPage() {
                                             At least 8 characters, letters and numbers.
                                         </p>
                                     </div>
-                                    <Button type="submit" className="w-full" disabled={isLoading}>
-                                        {isLoading ? "Creating Account..." : "Sign Up"}
-                                    </Button>
+                                    <SignupButton />
                                 </form>
                             </CardContent>
                         </Card>
