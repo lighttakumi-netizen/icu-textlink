@@ -1,29 +1,13 @@
+'use client'
+
 import Link from "next/link"
-
-// ... (existing imports)
-
-// ... inside TransactionCard ...
-
-{/* Contact info logic moved to Chat mainly, but can keep email if needed */ }
-{
-    isApproved && (
-        <p className="text-xs text-slate-500 mt-2">
-            Contact Email: {type === 'lending' ? t.borrower.email : t.lender.email}
-        </p>
-    )
-}
-                    </div >
-                </div >
-            </div >
-        )
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useState } from 'react'
+import { Card, CardContent } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Loader2, Mail, Check, X, MessageCircle } from "lucide-react"
+import { Loader2, Check, X, MessageCircle } from "lucide-react"
 import { updateTransactionStatus } from '@/app/textbooks/actions'
-import { ChatBox } from "@/components/ChatBox"
 import { ReviewModal } from "@/components/ReviewModal"
 
 type Transaction = {
@@ -33,7 +17,7 @@ type Transaction = {
     book: {
         id: string
         title: string
-        image_url: string
+        images: string[] | null
         course_id: string | null
         course_name: string
     }
@@ -57,7 +41,6 @@ export function TransactionList({
     currentUserId: string
 }) {
     const [isLoading, setIsLoading] = useState<string | null>(null)
-    const [activeChat, setActiveChat] = useState<string | null>(null)
 
     const lending = transactions.filter(t => t.lender.id === currentUserId)
     const borrowing = transactions.filter(t => t.borrower.id === currentUserId)
@@ -89,12 +72,17 @@ export function TransactionList({
         const isCompleted = ['returned', 'completed'].includes(t.status)
         const isApproved = t.status === 'approved'
 
+        // Logic to determine image
+        const imageUrl = (t.book.images && t.book.images.length > 0)
+            ? t.book.images[0]
+            : null
+
         return (
             <div key={t.id} className="border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden">
                 <div className="flex flex-col sm:flex-row gap-4 p-4">
                     {/* Book Image */}
-                    {t.book.image_url ? (
-                        <img src={t.book.image_url} alt={t.book.title} className="w-20 h-28 object-cover rounded-md bg-slate-200" />
+                    {imageUrl ? (
+                        <img src={imageUrl} alt={t.book.title} className="w-20 h-28 object-cover rounded-md bg-slate-200" />
                     ) : (
                         <div className="w-20 h-28 bg-slate-200 rounded-md flex items-center justify-center text-slate-400 text-xs text-center p-1">
                             No Image
