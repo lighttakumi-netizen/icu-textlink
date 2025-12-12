@@ -253,3 +253,97 @@ export async function submitReview(transactionId: string, targetId: string, rati
     revalidatePath('/dashboard')
     return { success: true }
 }
+
+export async function getMyTextbooks() {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) return []
+
+    const { data, error } = await supabase
+        .from('textbooks')
+        .select('*')
+        .eq('owner_id', user.id)
+        .order('created_at', { ascending: false })
+
+    if (error) {
+        console.error('Error fetching my textbooks:', error)
+        return []
+    }
+
+    return data as Textbook[]
+}
+
+export async function updateTextbook(id: string, formData: FormData) {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) return { error: "Not authenticated" }
+
+    const title = formData.get('title') as string
+    const course_name = formData.get('course_name') as string
+    const condition = formData.get('condition') as string
+    const description = formData.get('description') as string
+    const is_available = formData.get('is_available') === 'on'
+
+    if (!title || !course_name || !condition) {
+        return { error: 'Please fill in all required fields.' }
+    }
+
+    // Verify ownership
+    const { data: existing } = await supabase
+        .from('textbooks')
+        .select('owner_id')
+        .eq('id', id)
+        .single()
+
+    if (!existing || existing.owner_id !== user.id) {
+        return { error: "You are not authorized to update this textbook." }
+    }
+
+    const { error } = await supabase
+        .from('textbooks')
+        .update({
+            title,
+            course_name,
+            condition,
+            description,
+            is_available
+        })
+        .eq('id', id)
+
+    if (error) return { error: error.message }
+
+    revalidatePath('/dashboard')
+    revalidatePath(`/textbooks/${id}`)
+    return { success: true, message: "Textbook updated successfully" }
+}
+
+export async function deleteTextbook(id: string) {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) return { error: "Not authenticated" }
+
+    // Verify ownership
+    const { data: existing } = await supabase
+        .from('textbooks')
+        .select('owner_id')
+        .eq('id', id)
+        .single()
+
+    if (!existing || existing.owner_id !== user.id) {
+        return { error: "You are not authorized to delete this textbook." }
+    }
+
+    const { error } = await supabase
+        .from('textbooks')
+        .delete()
+        .eq('id', id)
+
+    if (error) return { error: error.message }
+
+    revalidatePath('/dashboard')
+    revalidatePath('/textbooks') // Remove from public list
+    return { success: true, message: "Textbook deleted successfully" }
+}

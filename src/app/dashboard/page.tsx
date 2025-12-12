@@ -1,10 +1,12 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Search, BookOpen, Plus, User } from "lucide-react"
 import { createClient } from "@/lib/supabase/server"
-import { getUserTransactions } from "@/app/textbooks/actions"
+import { getUserTransactions, getMyTextbooks } from "@/app/textbooks/actions"
 import { TransactionList } from "@/components/TransactionList"
+import { MyListings } from "@/components/MyListings"
 
 export default async function DashboardPage() {
     const supabase = createClient()
@@ -15,6 +17,7 @@ export default async function DashboardPage() {
     }
 
     const rawTransactions = await getUserTransactions() || []
+    const myTextbooks = await getMyTextbooks()
 
     // Transform Supabase response to match Component props
     const transactions = rawTransactions.map((t: any) => ({
@@ -82,11 +85,27 @@ export default async function DashboardPage() {
                     </Link>
                 </div>
 
-                {/* Transactions */}
-                <div className="space-y-4">
-                    <h2 className="text-2xl font-bold text-slate-900">Your Transactions</h2>
-                    <TransactionList transactions={transactions} currentUserId={user.id} />
-                </div>
+                <Tabs defaultValue="transactions" className="w-full">
+                    <div className="flex items-center justify-between mb-4">
+                        <TabsList>
+                            <TabsTrigger value="transactions">Transactions</TabsTrigger>
+                            <TabsTrigger value="listings">My Listings</TabsTrigger>
+                        </TabsList>
+                    </div>
+
+                    <TabsContent value="transactions">
+                        <div className="space-y-4">
+                            <h2 className="text-2xl font-bold text-slate-900 sr-only">Your Transactions</h2>
+                            <TransactionList transactions={transactions} currentUserId={user.id} />
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="listings">
+                        <div className="space-y-4">
+                            <MyListings textbooks={myTextbooks} />
+                        </div>
+                    </TabsContent>
+                </Tabs>
             </main>
         </div>
     )
