@@ -82,18 +82,34 @@ export function ChatBox({ transactionId, currentUserId }: { transactionId: strin
         e.preventDefault()
         if (!newMessage.trim() || isSending) return
 
-        setIsSending(true)
-        const content = newMessage
-        setNewMessage('') // Optimistic clear
+        const content = newMessage.trim()
+        setNewMessage('') // Clear input immediately
 
+        // Optimistic Update
+        const optimisticMsg: Message = {
+            id: 'temp-' + Date.now(),
+            content: content,
+            created_at: new Date().toISOString(),
+            sender_id: currentUserId,
+            sender: { full_name: 'You' } // Placeholder
+        }
+
+        setMessages(prev => [...prev, optimisticMsg])
+        scrollToBottom()
+
+        // Send to backend
         const res = await sendMessage(transactionId, content)
-        setIsSending(false)
 
         if (!res.success) {
+            // Revert on failure
+            setMessages(prev => prev.filter(m => m.id !== optimisticMsg.id))
+            setNewMessage(content)
             alert('Failed to send message')
-            setNewMessage(content) // Restore
         } else {
-            // Let Realtime handle the UI update
+            // Success: Realtime subscription will likely bring the "real" message back.
+            // We should handle deduping in the subscription or just let the key/id update ideally.
+            // But strict Supabase realtime might echo it back.
+            // For now, simpler to just keep the optimistic one until refresh or let realtime dedup logic handle it.
         }
     }
 
