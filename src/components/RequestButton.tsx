@@ -14,19 +14,22 @@ export function RequestButton({ textbookId }: { textbookId: string }) {
         if (!confirm("Are you sure you want to request this book?")) return
 
         setIsLoading(true)
-        const res = await requestTextbook(textbookId)
+        try {
+            const res = await requestTextbook(textbookId)
 
-        if (res?.error) {
-            alert(res.error)
-            setIsLoading(false)
-        } else if (res?.success) {
-            alert("Request sent successfully! check your dashboard.")
-            router.push('/dashboard')
-            router.refresh()
-        } else {
-            // Redirect happened server side if we used redirect() in action, 
-            // but we modified action to return object usually.
-            // If action does redirect, this code might not reach.
+            if (res?.error) {
+                alert(`Error: ${res.error}`)
+            } else if (res?.success) {
+                alert("Request sent successfully! Check your dashboard.")
+                router.push('/dashboard')
+                router.refresh()
+            }
+        } catch (e) {
+            console.error("Request failed unexpectedly:", e)
+            alert("An unexpected error occurred. Please try again.")
+        } finally {
+            // Only stop loading if we didn't succeed (success redirects)
+            // But router.push is client-side nav, so state might persist briefly.
             setIsLoading(false)
         }
     }

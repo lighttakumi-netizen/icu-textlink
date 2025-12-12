@@ -128,8 +128,8 @@ export async function requestTextbook(id: string) {
             borrower_id: user.id,
             lender_id: textbook.owner_id,
             status: 'pending',
-            start_date: new Date().toISOString(), // Mock dates for now
-            end_date: new Date().toISOString(),
+            start_date: new Date().toISOString().split('T')[0], // Today, YYYY-MM-DD
+            end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // +7 days
             amount: 0,
             fee_amount: 0
         })

@@ -36,13 +36,19 @@ export default function LoginPage() {
         setSuccess(null)
 
         const res = await signup(formData)
-        setIsLoading(false)
 
         if (res?.error) {
             setError(res.error)
+            setIsLoading(false)
         } else if (res && 'success' in res && res.success) {
             // Success case
             setSuccess(res.message)
+            setIsLoading(false)
+        } else {
+            // If redirect happens server-side (void return), we might not reach here, 
+            // or response is null/undefined. Keep loading true to prevent flicker.
+            // But if specific error not returned:
+            setIsLoading(false)
         }
     }
 
