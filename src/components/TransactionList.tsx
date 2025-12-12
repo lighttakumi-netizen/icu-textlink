@@ -1,8 +1,24 @@
-'use client'
+import Link from "next/link"
 
-import { useState } from 'react'
+// ... (existing imports)
+
+// ... inside TransactionCard ...
+
+{/* Contact info logic moved to Chat mainly, but can keep email if needed */ }
+{
+    isApproved && (
+        <p className="text-xs text-slate-500 mt-2">
+            Contact Email: {type === 'lending' ? t.borrower.email : t.lender.email}
+        </p>
+    )
+}
+                    </div >
+                </div >
+            </div >
+        )
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useState } from 'react'
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Loader2, Mail, Check, X, MessageCircle } from "lucide-react"
@@ -175,44 +191,42 @@ export function TransactionList({
                         )}
                     </div>
                 </div>
-
             </div>
-            </div >
         )
-}
+    }
 
-if (transactions.length === 0) {
+    if (transactions.length === 0) {
+        return (
+            <Card className="bg-slate-50 border-dashed">
+                <CardContent className="py-12 text-center text-slate-500">
+                    <p>No active transactions found.</p>
+                </CardContent>
+            </Card>
+        )
+    }
+
     return (
-        <Card className="bg-slate-50 border-dashed">
-            <CardContent className="py-12 text-center text-slate-500">
-                <p>No active transactions found.</p>
-            </CardContent>
-        </Card>
+        <Tabs defaultValue="borrowing" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="borrowing">Borrowed ({borrowing.length})</TabsTrigger>
+                <TabsTrigger value="lending">Lending ({lending.length})</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="borrowing" className="space-y-4">
+                {borrowing.length > 0 ? (
+                    borrowing.map(t => <TransactionCard key={t.id} t={t} type="borrowing" />)
+                ) : (
+                    <div className="text-center py-8 text-slate-500">You haven't requested any books yet.</div>
+                )}
+            </TabsContent>
+
+            <TabsContent value="lending" className="space-y-4">
+                {lending.length > 0 ? (
+                    lending.map(t => <TransactionCard key={t.id} t={t} type="lending" />)
+                ) : (
+                    <div className="text-center py-8 text-slate-500">No one has requested your books yet.</div>
+                )}
+            </TabsContent>
+        </Tabs>
     )
-}
-
-return (
-    <Tabs defaultValue="borrowing" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="borrowing">Borrowed ({borrowing.length})</TabsTrigger>
-            <TabsTrigger value="lending">Lending ({lending.length})</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="borrowing" className="space-y-4">
-            {borrowing.length > 0 ? (
-                borrowing.map(t => <TransactionCard key={t.id} t={t} type="borrowing" />)
-            ) : (
-                <div className="text-center py-8 text-slate-500">You haven't requested any books yet.</div>
-            )}
-        </TabsContent>
-
-        <TabsContent value="lending" className="space-y-4">
-            {lending.length > 0 ? (
-                lending.map(t => <TransactionCard key={t.id} t={t} type="lending" />)
-            ) : (
-                <div className="text-center py-8 text-slate-500">No one has requested your books yet.</div>
-            )}
-        </TabsContent>
-    </Tabs>
-)
 }
