@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -25,6 +26,8 @@ export function ReviewModal({ transactionId, targetId, onReviewSubmitted }: {
     const [comment, setComment] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
 
+    const router = useRouter()
+
     async function handleSubmit() {
         setIsSubmitting(true)
         const res = await submitReview(transactionId, targetId, rating, comment)
@@ -32,8 +35,9 @@ export function ReviewModal({ transactionId, targetId, onReviewSubmitted }: {
 
         if (res.success) {
             setOpen(false)
-            if (onReviewSubmitted) onReviewSubmitted()
             alert('Review submitted successfully!')
+            router.refresh()
+            if (onReviewSubmitted) onReviewSubmitted()
         } else {
             alert(res.error || "Failed to submit review")
         }

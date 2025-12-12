@@ -64,6 +64,17 @@ export default function ProfilePage({ user, profile }: { user: any, profile: any
                                 />
                             </div>
 
+                            <div className="space-y-2">
+                                <Label htmlFor="student_id">Student ID</Label>
+                                <Input
+                                    id="student_id"
+                                    name="student_id"
+                                    defaultValue={profile?.student_id || ""}
+                                    placeholder="e.g. 231234"
+                                />
+                                <p className="text-xs text-muted-foreground">Used for verification if needed.</p>
+                            </div>
+
                             <Button type="submit" disabled={isLoading}>
                                 {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
                                 Save Changes

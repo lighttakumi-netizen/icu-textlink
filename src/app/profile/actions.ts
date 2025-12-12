@@ -12,6 +12,7 @@ export async function updateProfile(formData: FormData) {
     }
 
     const fullName = formData.get('full_name') as string
+    const studentId = formData.get('student_id') as string
 
     if (!fullName) {
         return { error: "Name is required" }
@@ -19,16 +20,27 @@ export async function updateProfile(formData: FormData) {
 
     const { error } = await supabase
         .from('profiles')
-        .update({ full_name: fullName })
+        .update({
+            full_name: fullName,
+            student_id: studentId || null
+        })
         .eq('id', user.id)
 
     if (error) {
+        // Handle unique constraint violation for student_id specifically if needed, 
+        // but generic error message is fine for now.
+        if (error.code === '23505') { // unique_violation
+            return { error: "This Student ID is already registered." }
+        }
         return { error: error.message }
     }
 
     // Also update auth metadata for faster access in some places
     await supabase.auth.updateUser({
-        data: { full_name: fullName }
+        data: {
+            full_name: fullName,
+            student_id: studentId
+        }
     })
 
     revalidatePath('/profile')
