@@ -166,7 +166,7 @@ export async function getUserTransactions() {
             book:textbooks (
                 id,
                 title,
-                image_url,
+                images,
                 course_id
             ),
             borrower:profiles!transactions_borrower_id_fkey (
