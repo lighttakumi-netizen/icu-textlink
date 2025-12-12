@@ -114,9 +114,9 @@ export function ChatBox({ transactionId, currentUserId }: { transactionId: strin
     }
 
     return (
-        <div className="flex flex-col h-[400px] border rounded-md bg-white">
+        <div className="flex flex-col h-full bg-white">
             <div className="p-3 border-b bg-slate-50 font-medium text-slate-700">
-                Chat
+                Chat History
             </div>
 
             <ScrollArea className="flex-1 p-4">

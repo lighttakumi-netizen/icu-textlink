@@ -146,12 +146,14 @@ export function TransactionList({
                             {/* Chat Button (Visible if active transaction) */}
                             {(isApproved || isCompleted) && (
                                 <Button
+                                    asChild
                                     size="sm"
-                                    variant={activeChat === t.id ? "secondary" : "outline"}
-                                    onClick={() => setActiveChat(activeChat === t.id ? null : t.id)}
+                                    variant="outline"
                                 >
-                                    <MessageCircle className="h-4 w-4 mr-1" />
-                                    {activeChat === t.id ? 'Close Chat' : 'Chat'}
+                                    <Link href={`/transactions/${t.id}/chat`}>
+                                        <MessageCircle className="h-4 w-4 mr-1" />
+                                        Open Chat
+                                    </Link>
                                 </Button>
                             )}
 
@@ -174,48 +176,43 @@ export function TransactionList({
                     </div>
                 </div>
 
-                {/* Inline Chat Area */}
-                {activeChat === t.id && (
-                    <div className="border-t p-4 bg-slate-50">
-                        <ChatBox transactionId={t.id} currentUserId={currentUserId} />
-                    </div>
-                )}
             </div>
+            </div >
         )
-    }
+}
 
-    if (transactions.length === 0) {
-        return (
-            <Card className="bg-slate-50 border-dashed">
-                <CardContent className="py-12 text-center text-slate-500">
-                    <p>No active transactions found.</p>
-                </CardContent>
-            </Card>
-        )
-    }
-
+if (transactions.length === 0) {
     return (
-        <Tabs defaultValue="borrowing" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="borrowing">Borrowed ({borrowing.length})</TabsTrigger>
-                <TabsTrigger value="lending">Lending ({lending.length})</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="borrowing" className="space-y-4">
-                {borrowing.length > 0 ? (
-                    borrowing.map(t => <TransactionCard key={t.id} t={t} type="borrowing" />)
-                ) : (
-                    <div className="text-center py-8 text-slate-500">You haven't requested any books yet.</div>
-                )}
-            </TabsContent>
-
-            <TabsContent value="lending" className="space-y-4">
-                {lending.length > 0 ? (
-                    lending.map(t => <TransactionCard key={t.id} t={t} type="lending" />)
-                ) : (
-                    <div className="text-center py-8 text-slate-500">No one has requested your books yet.</div>
-                )}
-            </TabsContent>
-        </Tabs>
+        <Card className="bg-slate-50 border-dashed">
+            <CardContent className="py-12 text-center text-slate-500">
+                <p>No active transactions found.</p>
+            </CardContent>
+        </Card>
     )
+}
+
+return (
+    <Tabs defaultValue="borrowing" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="borrowing">Borrowed ({borrowing.length})</TabsTrigger>
+            <TabsTrigger value="lending">Lending ({lending.length})</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="borrowing" className="space-y-4">
+            {borrowing.length > 0 ? (
+                borrowing.map(t => <TransactionCard key={t.id} t={t} type="borrowing" />)
+            ) : (
+                <div className="text-center py-8 text-slate-500">You haven't requested any books yet.</div>
+            )}
+        </TabsContent>
+
+        <TabsContent value="lending" className="space-y-4">
+            {lending.length > 0 ? (
+                lending.map(t => <TransactionCard key={t.id} t={t} type="lending" />)
+            ) : (
+                <div className="text-center py-8 text-slate-500">No one has requested your books yet.</div>
+            )}
+        </TabsContent>
+    </Tabs>
+)
 }
