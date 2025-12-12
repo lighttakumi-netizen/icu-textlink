@@ -50,9 +50,15 @@ export default function CreateTextbookPage() {
                             <Input id="title" name="title" required placeholder="e.g. Introduction to Psychology" />
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="course_name">Course Name/ID</Label>
-                            <Input id="course_name" name="course_name" required placeholder="e.g. PSY101" />
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="course_id">Course ID</Label>
+                                <Input id="course_id" name="course_id" placeholder="e.g. PSY101" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="course_name">Course Name</Label>
+                                <Input id="course_name" name="course_name" required placeholder="e.g. Intro to Psychology" />
+                            </div>
                         </div>
 
                         <div className="space-y-2">

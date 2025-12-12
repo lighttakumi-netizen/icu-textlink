@@ -9,17 +9,8 @@ import { Trash2, Loader2, Plus, BookOpen } from "lucide-react"
 import { deleteTextbook } from '@/app/textbooks/actions'
 import { EditTextbookDialog } from "./EditTextbookDialog"
 import Link from 'next/link'
+import { type Textbook } from '@/app/textbooks/actions'
 
-type Textbook = {
-    id: string
-    title: string
-    course_name: string
-    condition: string
-    description: string | null
-    images: string[] | null
-    is_available: boolean
-    created_at: string
-}
 
 export function MyListings({ textbooks }: { textbooks: Textbook[] }) {
     const [isDeleting, setIsDeleting] = useState<string | null>(null)

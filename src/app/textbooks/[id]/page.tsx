@@ -36,7 +36,8 @@ export default async function TextbookDetailsPage({ params }: { params: { id: st
                     ) : (
                         <div className="flex flex-col items-center gap-2">
                             <Library className="h-16 w-16 opacity-20" />
-                            <span>No Image</span>
+                            {textbook.course_id && <span className="font-semibold mr-2">{textbook.course_id}:</span>}
+                            {textbook.course_name}
                         </div>
                     )}
                 </div>

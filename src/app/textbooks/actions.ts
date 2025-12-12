@@ -8,6 +8,7 @@ export type Textbook = {
     id: string
     title: string
     course_name: string
+    course_id: string | null
     condition: string
     description: string | null
     images: string[] | null
@@ -34,7 +35,7 @@ export async function getTextbooks(query?: string) {
         .order('created_at', { ascending: false })
 
     if (query) {
-        queryBuilder = queryBuilder.or(`title.ilike.%${query}%,course_name.ilike.%${query}%`)
+        queryBuilder = queryBuilder.or(`title.ilike.%${query}%,course_name.ilike.%${query}%,course_id.ilike.%${query}%`)
     }
 
     const { data, error } = await queryBuilder
@@ -57,6 +58,7 @@ export async function createTextbook(formData: FormData) {
 
     const title = formData.get('title') as string
     const course_name = formData.get('course_name') as string
+    const course_id = formData.get('course_id') as string
     const condition = formData.get('condition') as string
     const description = formData.get('description') as string
 
@@ -72,6 +74,7 @@ export async function createTextbook(formData: FormData) {
         .insert({
             title,
             course_name,
+            course_id: course_id || null,
             condition,
             description,
             owner_id: user.id,
@@ -135,6 +138,7 @@ export async function requestTextbook(id: string) {
         })
 
     if (error) {
+        console.error("Error creating transaction:", error)
         return { error: error.message }
     }
 
@@ -149,16 +153,21 @@ export async function getUserTransactions() {
 
     if (!user) return []
 
+    console.log("Fetching transactions for user:", user.id)
+
     const { data, error } = await supabase
         .from('transactions')
         .select(`
             id,
             status,
             created_at,
+            lender_id,
+            borrower_id,
             book:textbooks (
                 id,
                 title,
-                image_url
+                image_url,
+                course_id
             ),
             borrower:profiles!transactions_borrower_id_fkey (
                 id,
@@ -179,6 +188,7 @@ export async function getUserTransactions() {
         return []
     }
 
+    console.log("Transactions found:", data?.length)
     return data
 }
 
@@ -282,6 +292,7 @@ export async function updateTextbook(id: string, formData: FormData) {
 
     const title = formData.get('title') as string
     const course_name = formData.get('course_name') as string
+    const course_id = formData.get('course_id') as string
     const condition = formData.get('condition') as string
     const description = formData.get('description') as string
     const is_available = formData.get('is_available') === 'on'
@@ -306,6 +317,7 @@ export async function updateTextbook(id: string, formData: FormData) {
         .update({
             title,
             course_name,
+            course_id: course_id || null,
             condition,
             description,
             is_available

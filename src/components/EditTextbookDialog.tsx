@@ -23,16 +23,8 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Loader2, Pencil } from "lucide-react"
-import { updateTextbook } from '@/app/textbooks/actions'
+import { updateTextbook, type Textbook } from '@/app/textbooks/actions'
 
-type Textbook = {
-    id: string
-    title: string
-    course_name: string
-    condition: string
-    description: string | null
-    is_available: boolean
-}
 
 export function EditTextbookDialog({ textbook }: { textbook: Textbook }) {
     const [open, setOpen] = useState(false)
@@ -72,9 +64,15 @@ export function EditTextbookDialog({ textbook }: { textbook: Textbook }) {
                         <Label htmlFor="title">Title</Label>
                         <Input id="title" name="title" defaultValue={textbook.title} required />
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="course_name">Course Name</Label>
-                        <Input id="course_name" name="course_name" defaultValue={textbook.course_name} required />
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="course_id">Course ID</Label>
+                            <Input id="course_id" name="course_id" defaultValue={textbook.course_id || ""} placeholder="e.g. PSY101" />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="course_name">Course Name</Label>
+                            <Input id="course_name" name="course_name" defaultValue={textbook.course_name} required />
+                        </div>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="condition">Condition</Label>

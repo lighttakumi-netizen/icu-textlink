@@ -35,7 +35,10 @@ export function TextbookCard({ textbook }: { textbook: Textbook }) {
             </div>
             <CardHeader className="p-4">
                 <CardTitle className="line-clamp-2 text-lg">{textbook.title}</CardTitle>
-                <p className="text-sm text-muted-foreground">{textbook.course_name}</p>
+                <p className="text-sm text-muted-foreground">
+                    {textbook.course_id && <span className="font-semibold mr-1">{textbook.course_id}:</span>}
+                    {textbook.course_name}
+                </p>
             </CardHeader>
             <CardContent className="p-4 pt-0 flex-1">
                 <p className="text-sm line-clamp-3 text-slate-600">
