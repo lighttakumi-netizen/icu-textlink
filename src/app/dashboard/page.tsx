@@ -1,10 +1,9 @@
-```
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Search, BookOpen, Plus, User, Wallet, PlusCircle } from "lucide-react"
-import { createClient } from "@/lib/supabase/server"  // Changed to lib based on previous successful files
+import { createClient } from "@/lib/supabase/server"
 import { getUserTransactions } from "@/app/textbooks/actions"
 import { TransactionList } from "@/components/TransactionList"
 import { ConnectStripeButton } from "@/components/ConnectStripeButton"
@@ -19,14 +18,14 @@ export default async function DashboardPage() {
     }
 
     const rawTransactions = await getUserTransactions() || []
-    
+
     // Fetch user profile for Stripe status
     const { data: profile } = await supabase
         .from('profiles')
         .select('stripe_charges_enabled')
         .eq('id', user.id)
         .single()
-    
+
     const isStripeConnected = profile?.stripe_charges_enabled || false
 
     // Fetch my textbooks
@@ -147,7 +146,7 @@ export default async function DashboardPage() {
                                                 <h4 className="font-medium line-clamp-1">{book.title}</h4>
                                                 <p className="text-xs text-slate-500">{book.course_name}</p>
                                                 <div className="mt-2 text-xs">
-                                                    <Link href={`/ textbooks / ${ book.id } `} className="text-indigo-600 hover:underline">View Details</Link>
+                                                    <Link href={`/textbooks/${book.id}`} className="text-indigo-600 hover:underline">View Details</Link>
                                                 </div>
                                             </div>
                                         </div>
@@ -165,4 +164,3 @@ export default async function DashboardPage() {
         </div>
     )
 }
-```

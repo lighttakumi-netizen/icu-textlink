@@ -15,7 +15,6 @@ import {
     DialogFooter
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { RENTAL_PLANS, RentalDuration } from '@/lib/pricing'
 
 export function RequestButton({ textbookId, isOwner }: { textbookId: string, isOwner: boolean }) {
@@ -59,13 +58,20 @@ export function RequestButton({ textbookId, isOwner }: { textbookId: string, isO
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
-                    <RadioGroup value={selectedPlan} onValueChange={(v) => setSelectedPlan(v as RentalDuration)}>
+                    <div className="grid gap-2">
                         {(Object.keys(RENTAL_PLANS) as RentalDuration[]).map((planKey) => {
                             const plan = RENTAL_PLANS[planKey]
+                            const isSelected = selectedPlan === planKey
                             return (
-                                <div key={planKey} className="flex items-center space-x-2 border p-3 rounded-md hover:bg-slate-50 cursor-pointer">
-                                    <RadioGroupItem value={planKey} id={planKey} />
-                                    <Label htmlFor={planKey} className="flex-1 cursor-pointer flex justify-between">
+                                <div
+                                    key={planKey}
+                                    className={`flex items-center space-x-3 border p-3 rounded-md cursor-pointer transition-colors ${isSelected ? 'border-indigo-600 bg-indigo-50' : 'hover:bg-slate-50'}`}
+                                    onClick={() => setSelectedPlan(planKey)}
+                                >
+                                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${isSelected ? 'border-indigo-600' : 'border-slate-400'}`}>
+                                        {isSelected && <div className="w-2 h-2 rounded-full bg-indigo-600" />}
+                                    </div>
+                                    <Label className="flex-1 cursor-pointer flex justify-between">
                                         <span>{plan.label}</span>
                                         <div className="text-right">
                                             <span className="block font-semibold">¥{plan.price}</span>
@@ -75,7 +81,7 @@ export function RequestButton({ textbookId, isOwner }: { textbookId: string, isO
                                 </div>
                             )
                         })}
-                    </RadioGroup>
+                    </div>
                     <div className="text-xs text-slate-500 text-right">
                         * Payment is required after approval.
                     </div>
