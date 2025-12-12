@@ -75,6 +75,19 @@ export default function ProfilePage({ user, profile }: { user: any, profile: any
                                 <p className="text-xs text-muted-foreground">Used for verification if needed.</p>
                             </div>
 
+                            <div className="space-y-2">
+                                <Label htmlFor="major">Major (Optional)</Label>
+                                <Input
+                                    id="major"
+                                    name="major"
+                                    defaultValue={profile?.major || ""}
+                                    placeholder="CLA"
+                                    maxLength={3}
+                                    className="uppercase"
+                                />
+                                <p className="text-xs text-muted-foreground">3-letter Major code (e.g. ECO, SOC)</p>
+                            </div>
+
                             <Button type="submit" disabled={isLoading}>
                                 {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
                                 Save Changes

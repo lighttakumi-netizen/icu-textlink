@@ -13,6 +13,7 @@ export async function updateProfile(formData: FormData) {
 
     const fullName = formData.get('full_name') as string
     const studentId = formData.get('student_id') as string
+    const major = (formData.get('major') as string)?.toUpperCase().substring(0, 3) || null
 
     if (!fullName) {
         return { error: "Name is required" }
@@ -22,7 +23,8 @@ export async function updateProfile(formData: FormData) {
         .from('profiles')
         .update({
             full_name: fullName,
-            student_id: studentId || null
+            student_id: studentId || null,
+            major: major
         })
         .eq('id', user.id)
 
@@ -39,7 +41,8 @@ export async function updateProfile(formData: FormData) {
     await supabase.auth.updateUser({
         data: {
             full_name: fullName,
-            student_id: studentId
+            student_id: studentId,
+            major: major
         }
     })
 
