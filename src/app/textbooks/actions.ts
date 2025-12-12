@@ -110,7 +110,9 @@ export async function getTextbook(id: string) {
     return data as Textbook
 }
 
-export async function requestTextbook(id: string) {
+import { RENTAL_PLANS, RentalDuration } from '@/lib/pricing'
+
+export async function requestTextbook(id: string, duration: RentalDuration) {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -123,6 +125,14 @@ export async function requestTextbook(id: string) {
     if (!textbook) return { error: "Textbook not found" }
     if (textbook.owner_id === user.id) return { error: "You cannot borrow your own book." }
 
+    // Calculate dates and price
+    const plan = RENTAL_PLANS[duration]
+    if (!plan) return { error: "Invalid duration" }
+
+    const startDate = new Date()
+    const endDate = new Date()
+    endDate.setDate(startDate.getDate() + plan.days)
+
     // Create transaction
     const { error } = await supabase
         .from('transactions')
@@ -130,11 +140,12 @@ export async function requestTextbook(id: string) {
             book_id: id,
             borrower_id: user.id,
             lender_id: textbook.owner_id,
-            status: 'pending',
-            start_date: new Date().toISOString().split('T')[0], // Today, YYYY-MM-DD
-            end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // +7 days
-            amount: 0,
-            fee_amount: 0
+            status: 'pending', // Waiting for approval
+            start_date: startDate.toISOString().split('T')[0],
+            end_date: endDate.toISOString().split('T')[0],
+            amount: plan.price,
+            fee_amount: plan.fee,
+            payment_status: 'unpaid'
         })
 
     if (error) {
